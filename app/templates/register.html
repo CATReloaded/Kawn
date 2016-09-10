@@ -1,8 +1,12 @@
 {%extends 'base.html'%}
+{% block title %}
+  <title>Kawn | registration</title>
+{% endblock %}
 {%block content%}
-<form method='post' name='login'>
-<p>{{form.email}}</p>
-<p>{{form.password}}</p>
-<input type='submit' value='Sign In'>
-</form>
+  <form method='post' name='login'>
+    <h4>Register</h4>
+    <p>{{ form.email.label }} {{ form.email }}</p>
+    <p>{{ form.password.label }} {{ form.password }}</p>
+    <input type='submit' value='SignUp'>
+  </form>
 {%endblock%}
