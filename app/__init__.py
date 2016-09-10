@@ -7,22 +7,18 @@ from peewee import *
 from flask_login import LoginManager
 
 app = Flask(__name__)
-app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'super-secret'
-app.config['DATABASE'] = {
-    'name': 'example.db',
-    'engine': 'peewee.SqliteDatabase',
-}
+from app.config import base
+app.config.from_object(base)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 db = Database(app)
 
 class LoginForm(Form):
-	email = StringField('email', validators=[DataRequired()])
-	password = StringField('password', validators=[DataRequired()])
+    email = StringField('email', validators=[DataRequired()])
+    password = StringField('password', validators=[DataRequired()])
 
-from app.models import User
+from app.models.models import User
 User.create_table(fail_silently=True)
 
 from app import views
