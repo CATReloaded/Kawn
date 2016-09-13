@@ -1,6 +1,6 @@
-DEBUG = True
-SECRET_KEY = 'super-secret'
-DATABASE = {
-    'name': 'example.db',
-    'engine': 'peewee.SqliteDatabase',
-}
+
+'''
+    Common configuration of the app lives here
+    this module gets imported in local develpoment config module
+    and the production config module
+'''
