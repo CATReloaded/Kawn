@@ -1,9 +1,10 @@
 from peewee import *
-from passlib.hash import sha256_crypt
 from flask_login import UserMixin
-
+from werkzeug import security
 from app.models.core import Base
 
+class UserAlreadyExists(BaseException):
+	pass
 
 class User(Base, UserMixin):
     '''
@@ -12,32 +13,27 @@ class User(Base, UserMixin):
     Note: should only contain methods and fields
           related to this functionalties only
     '''
-    email = TextField()
+    email = TextField(primary_key=True)
     password = TextField()
 
     @staticmethod
     def register(email, password):
-        password = sha256_crypt.encrypt(password)
+        password = security.generate_password_hash(password, method='pbkdf2:sha1', salt_length=8)
         try:
             user = User.get(email=email)
-            if user:
-                # should raise an exception instead
-                raise "this user aleardy exists"
-        except: # an apropriate exception should be provided here
+            raise UserAlreadyExists
+        except User.DoesNotExist:
             user = User.create(email=email, password=password)
             return user
 
     @staticmethod
     def authenticat(email, password):
-        # if user doesn't exist this will fail badly
-        # should be inclosed in an try/except
         user = User.get(email=email)
-        # werkzeug provides a good way of hashing and unhashing passwords
-        password = sha256_crypt.encrypt(password)
-
-        # this will always return False
-        # why do you think? @amrshedou
-        if user.password == password:
-            return True
+        check = security.check_password_hash(user.password, password)
+        if check:
+            return user
         else:
             return False
+
+	def get_id(self):
+            return self.email
