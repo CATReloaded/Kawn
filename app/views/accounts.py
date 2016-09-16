@@ -28,7 +28,7 @@ def login():
     form = LoginForm()
     if request.method == 'POST':
         try:
-            user = User.authenticat(form.email.data, form.password.data)
+            user = User.authenticat(User.get(email=form.email.data), form.email.data, form.password.data)
             if user:
                 login_user(user)
                 return redirect(url_for('index'))

@@ -26,14 +26,16 @@ class User(Base, UserMixin):
             user = User.create(email=email, password=password)
             return user
 
-    @staticmethod
-    def authenticat(email, password):
-        user = User.get(email=email)
-        check = security.check_password_hash(user.password, password)
+    def authenticat(self, email, password):
+        if self.email == email:
+            pass
+        else:
+            return False
+        check = security.check_password_hash(self.password, password)
         if check:
-            return user
+            return self
         else:
             return False
 
-	def get_id(self):
-            return self.email
+    def get_id(self):
+        return self.email
