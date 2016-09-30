@@ -26,16 +26,9 @@ class User(Base, UserMixin):
             user = User.create(email=email, password=password)
             return user
 
-    def authenticat(self, email, password):
-        if self.email == email:
-            pass
-        else:
-            return False
-        check = security.check_password_hash(self.password, password)
-        if check:
-            return self
-        else:
-            return False
+    def authenticat_password(self, password):
+        return security.check_password_hash(self.password, password)
+
 
     def get_id(self):
         return self.email

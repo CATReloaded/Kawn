@@ -28,8 +28,9 @@ def login():
     form = LoginForm()
     if request.method == 'POST':
         try:
-            user = User.authenticat(User.get(email=form.email.data), form.email.data, form.password.data)
-            if user:
+            user = User.get(email=form.email.data)
+            check = user.authenticat_password(form.password.data)
+            if check:
                 login_user(user)
                 return redirect(url_for('index'))
         except User.DoesNotExist:
