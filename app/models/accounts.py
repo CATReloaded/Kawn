@@ -3,8 +3,11 @@ from flask_login import UserMixin
 from werkzeug import security
 from app.models.core import Base
 
-class UserAlreadyExists(BaseException):
+class EmailAlreadyUsed(BaseException):
 	pass
+
+class UsernameAlreadyUsed(BaseException):
+    pass
 
 class User(Base, UserMixin):
     '''
@@ -13,17 +16,23 @@ class User(Base, UserMixin):
     Note: should only contain methods and fields
           related to this functionalties only
     '''
-    email = TextField(primary_key=True)
+    email = TextField(unique=True)
+    username = TextField(primary_key = True)
     password = TextField()
 
     @staticmethod
-    def register(email, password):
+    def register(email, username, password):
         password = security.generate_password_hash(password, method='pbkdf2:sha1', salt_length=8)
         try:
-            user = User.get(email=email)
-            raise UserAlreadyExists
+            if User.get(email=email) :
+                raise EmailAlreadyUsed
         except User.DoesNotExist:
-            user = User.create(email=email, password=password)
+            try :
+                if User.get(username=username) :
+                    raise UsernameAlreadyUsed
+            except User.DoesNotExist :
+                pass
+            user = User.create(email=email, username=username, password=password)
             return user
 
     def authenticat_password(self, password):
@@ -31,4 +40,4 @@ class User(Base, UserMixin):
 
 
     def get_id(self):
-        return self.email
+        return self.username
