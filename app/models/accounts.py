@@ -19,6 +19,7 @@ class User(Base, UserMixin):
     email = TextField(unique=True)
     username = TextField(unique = True)
     password = TextField()
+    id = PrimaryKeyField()
 
     @staticmethod
     def register(email, username, password):
@@ -40,4 +41,4 @@ class User(Base, UserMixin):
 
 
     def get_id(self):
-        return self.username
+        return self.id

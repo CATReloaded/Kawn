@@ -17,7 +17,7 @@ from app.models.accounts import User
 @login_manager.user_loader
 def load_user(user_id):
 	try:
-	    return User.get(username=user_id)
+	    return User.get(id=user_id)
 	except User.DoesNotExist:
 		pass
 
@@ -25,6 +25,8 @@ def load_user(user_id):
 def unauthorized_callback():
     return redirect('/login')
 
+from app.models.core import db
 User.create_table(fail_silently=True)
+db.register_fields({'primary_key': 'BIGINT AUTOINCREMENT'})
 
 from app.views.accounts import *
