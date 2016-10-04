@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 import peewee
 from app import App
 from app.forms.user_forms import LoginForm
@@ -8,10 +8,12 @@ from werkzeug import security
 from app.models.core import db
 
 @App.route('/index')
+@login_required
 def index():
     return "Hello " + current_user.username
 
 @App.route('/<username>')
+@login_required
 def profile(username):
     try :
         user = User.get(username=username)
@@ -21,6 +23,7 @@ def profile(username):
     return render_template('profile_user.html', user=user)    
 
 @App.route("/edit_profile", methods=('GET', 'POST'))
+@login_required
 def edit_profile():
     global current_user
     user = User.get(email=current_user.email)
@@ -76,6 +79,7 @@ def login():
     return render_template('login.html', form=form)
 
 @App.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))

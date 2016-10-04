@@ -21,7 +21,10 @@ def load_user(user_id):
 	except User.DoesNotExist:
 		pass
 
-#User.drop_table()
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect('/login')
+
 User.create_table(fail_silently=True)
 
 from app.views.accounts import *
