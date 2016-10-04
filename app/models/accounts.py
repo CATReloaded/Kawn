@@ -17,7 +17,7 @@ class User(Base, UserMixin):
           related to this functionalties only
     '''
     email = TextField(unique=True)
-    username = TextField(primary_key = True)
+    username = TextField(unique = True)
     password = TextField()
 
     @staticmethod

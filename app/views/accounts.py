@@ -5,6 +5,7 @@ from app import App
 from app.forms.user_forms import LoginForm
 from app.models.accounts import User, EmailAlreadyUsed, UsernameAlreadyUsed
 from werkzeug import security
+from app.models.core import db
 
 @App.route('/index')
 def index():
@@ -23,24 +24,16 @@ def profile(username):
 def edit_profile():
     global current_user
     user = User.get(email=current_user.email)
-    #username = current_user.username
-    #email = current_user.email
     form = LoginForm(username=user.username, email=user.email)
     if request.method == "POST" :
         if form.username.data != user.username :
             try:
-                User.update(username=form.username.data).where(email==user.email).execute()
-                current_user = User.get(email=user.email)
-                current_user.username = User.get(email=user.email).username
-                current_user.save()
+	            db.execute_sql("UPDATE User SET username=? WHERE email=?;", (form.username.data, user.email))
             except peewee.IntegrityError:
                 flash("Username already registered")
         if form.email.data != user.email:
             try :
-                User.update(email=form.email.data).where(username==user.username).execute()
-                current_user = User.get(username=user.username)
-                current_user.email = User.get(username = user.username).email
-                current_user.save()
+                db.execute_sql("UPDATE User SET email=? WHERE username=?;", ( form.email.data,user.username))
             except peewee.IntegrityError :
                 flash("Email already registered")
         if form.password.data != '':
