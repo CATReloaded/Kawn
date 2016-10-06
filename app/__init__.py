@@ -1,24 +1,23 @@
 from flask import Flask
-from flask_peewee.db import Database
-from flask_wtf import Form
-from wtforms import StringField 
-from wtforms.validators import DataRequired 
 from peewee import *
 from flask_login import LoginManager
 
-app = Flask(__name__)
-from app.config import base
-app.config.from_object(base)
+from app.config import local
+
+
+App = Flask(__name__)
+App.config.from_object(local)
+
 
 login_manager = LoginManager()
-login_manager.init_app(app)
-db = Database(app)
+login_manager.init_app(App)
 
-class LoginForm(Form):
-    email = StringField('email', validators=[DataRequired()])
-    password = StringField('password', validators=[DataRequired()])
+from app.models.accounts import User
 
-from app.models.models import User
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(email=user_id)
+
 User.create_table(fail_silently=True)
 
-from app import views
+from app.views.accounts import *
