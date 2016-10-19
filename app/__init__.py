@@ -1,23 +1,17 @@
 from flask import Flask
-from peewee import *
 from flask_login import LoginManager
-
-from app.config import local
-
+from flask_sqlalchemy import SQLAlchemy
+from app import config
 
 App = Flask(__name__)
-App.config.from_object(local)
+App.config.from_object(config)
+
+db = SQLAlchemy(App)
 
 
 login_manager = LoginManager()
 login_manager.init_app(App)
 
-from app.models.accounts import User
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(email=user_id)
-
-User.create_table(fail_silently=True)
-
-from app.views.accounts import *
+from app.models.core import *
+from app.forms.user_forms import *
+from app.views.new_view import *
